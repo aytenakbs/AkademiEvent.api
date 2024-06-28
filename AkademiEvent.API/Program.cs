@@ -1,9 +1,11 @@
 
 using AkademiEvent.API.Models.ORM;
+using AkademiEvent.API.Models.Validations.Activity;
 using AkademiEvent.API.Models.Validations.Category;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace AkademiEvent.API;
 
@@ -32,6 +34,13 @@ public class Program
         });
         builder.Services.AddValidatorsFromAssemblyContaining<CreateCategoryRequestValidator>();
         builder.Services.AddValidatorsFromAssemblyContaining<UpdateCategoryRequestValidator>();
+        builder.Services.AddValidatorsFromAssemblyContaining<CreateActivityRequestValidator>();
+        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                options.Authority = "https://localhost:5001";
+                options.Audience = "resourceapi";
+            });
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
@@ -42,12 +51,14 @@ public class Program
         }
 
         app.UseHttpsRedirection();
+        app.UseAuthentication();
 
         app.UseAuthorization();
 
 
         app.MapControllers();
         app.UseCors();
+        app.UseStaticFiles();
 
         app.Run();
     }

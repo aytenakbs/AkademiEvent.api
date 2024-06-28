@@ -9,4 +9,9 @@ public class AkademiEventContext:DbContext
 
     }
     public DbSet<Category> Categories { get; set; }
+    public DbSet<Activity> Activities { get; set; }
+    public DbSet<ActivityImage> ActivityImages { get; set; }
+    public DbSet<City> Cities { get; set; }
+    public DbSet<BlogPost> BlogPosts { get; set; }
+    public DbSet<AdminUser> AdminUsers { get; set; }
 }
