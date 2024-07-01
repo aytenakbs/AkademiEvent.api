@@ -6,6 +6,8 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace AkademiEvent.API;
 
@@ -35,12 +37,20 @@ public class Program
         builder.Services.AddValidatorsFromAssemblyContaining<CreateCategoryRequestValidator>();
         builder.Services.AddValidatorsFromAssemblyContaining<UpdateCategoryRequestValidator>();
         builder.Services.AddValidatorsFromAssemblyContaining<CreateActivityRequestValidator>();
-        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(options =>
+
+        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(option =>
+        {
+            option.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
             {
-                options.Authority = "https://localhost:5001";
-                options.Audience = "resourceapi";
-            });
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidIssuer = "ayten@gmail.com",
+                ValidAudience = "aytenn@gmail.com",
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("ironmaidenpentagramslipknotironmaidenpentagramslipknot")),
+                ValidateLifetime = true,
+                ClockSkew = TimeSpan.Zero
+            };
+        });
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
@@ -57,8 +67,9 @@ public class Program
 
 
         app.MapControllers();
-        app.UseCors();
+        
         app.UseStaticFiles();
+        app.UseCors();
 
         app.Run();
     }

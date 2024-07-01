@@ -1,5 +1,6 @@
 ﻿using AkademiEvent.API.Models.DTO.category;
 using AkademiEvent.API.Models.ORM;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,6 +14,7 @@ public class CategoryController : ControllerBase
     {
         _db = db;
     }
+    
     [HttpGet]
     public IActionResult GetAllCategories()
     {
@@ -43,6 +45,7 @@ public class CategoryController : ControllerBase
             return Ok(model);
         }
     }
+    [Authorize]
     [HttpPost]
     public IActionResult CreateCategory(CreateCategoryRequestDto model)
     {

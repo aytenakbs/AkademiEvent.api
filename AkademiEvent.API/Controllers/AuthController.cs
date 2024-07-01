@@ -1,4 +1,5 @@
-﻿using AkademiEvent.API.Models.DTO.auth;
+﻿using AkademiEvent.API.Models.Auth;
+using AkademiEvent.API.Models.DTO.auth;
 using AkademiEvent.API.Models.ORM;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,6 +14,7 @@ public class AuthController : ControllerBase
     {
         _db = db;
     }
+    [HttpPost]
     public IActionResult Post(LoginRequestDto model)
     {
         var user=_db.AdminUsers.FirstOrDefault(x=>x.Email==model.Email&&x.Password==model.Password&&x.IsDeleted==false);
@@ -20,6 +22,11 @@ public class AuthController : ControllerBase
         {
             return BadRequest("Invalid email or password");
         }
-        return Ok();
+        else
+        {
+            var token = EtkinlikTokenHandler.CreateToken(user.Email);
+            return Ok(token);
+        }
+        
     }
 }
